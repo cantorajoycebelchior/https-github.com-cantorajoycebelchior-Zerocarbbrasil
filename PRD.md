@@ -11,7 +11,7 @@
 1. Inteligência Artificial com Visão Computacional para ler rótulos brasileiros e desmascarar açúcares e amidos ocultos.
 2. IA Nutricional com sugestões para todos os períodos do dia (café, almoço, lanche, jantar e ceia).
 3. Mais de 50 receitas 100% livres de carboidratos com ingredientes acessíveis no Brasil.
-4. Treinos semanais em casa com instrutores em língua portuguesa e queima calórica integrada.
+4. Treinos semanais em casa com links diretos para o YouTube em língua portuguesa e queima calórica integrada.
 5. Acompanhamento de peso, medidas corporais e anéis de hidratação/macronutrientes.
 6. Painel administrativo para gestão de assinaturas e suporte nativo via WhatsApp.
 

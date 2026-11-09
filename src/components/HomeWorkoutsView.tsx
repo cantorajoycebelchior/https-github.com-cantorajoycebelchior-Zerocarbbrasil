@@ -69,8 +69,6 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
 
   const [completedExercises, setCompletedExercises] = useState<Record<string, boolean>>({});
   const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(null);
-  const [activeVideoExercise, setActiveVideoExercise] = useState<ExerciseItem | null>(null);
-  const [showFullSessionModal, setShowFullSessionModal] = useState<boolean>(false);
 
   // Search state for workout modalities (e.g. Tai Chi, Boxe, Pernas)
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -156,7 +154,7 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
       return;
     }
 
-    const textToSpeak = text || activeVideoExercise?.voiceGuidanceText || activeVideoExercise?.instructions.join('. ') || '';
+    const textToSpeak = text || '';
     if (!textToSpeak) return;
 
     try {
@@ -267,7 +265,7 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
               Rotina Semanal com Vídeos em Português
             </h2>
             <p className="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-              Assista a instruções em <strong className="text-emerald-400 font-extrabold">Português do Brasil (pt-BR)</strong> gravadas por educadores físicos, com explicações detalhadas de postura, áudio guia e respiração correta para queimar gordura com segurança.
+              Acesse os links diretos para os treinos no YouTube em <strong className="text-emerald-400 font-extrabold">Português do Brasil (pt-BR)</strong>, com passo a passo dos exercícios, cronômetro integrado e orientações para queimar gordura com segurança.
             </p>
           </div>
 
@@ -387,46 +385,38 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
         </div>
       </div>
 
-      {/* Video Aula Completa Banner */}
-      {currentWorkout.fullSessionVideoUrl && (
-        <div className="bg-gradient-to-r from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 rounded-3xl p-4 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Treino Completo no YouTube Banner */}
+      {(currentWorkout.fullSessionYoutubeUrl || currentWorkout.fullSessionVideoUrl) && (
+        <div className="bg-gradient-to-r from-red-950/50 via-slate-900 to-slate-900 border border-red-500/30 rounded-3xl p-4 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <Tv className="w-3 h-3 text-emerald-400" />
-                Videoaula Completa do Dia
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-red-600/20 text-red-400 border border-red-500/30 flex items-center gap-1">
+                <Tv className="w-3 h-3 text-red-400" />
+                Treino Completo no YouTube
               </span>
               <span className="text-[10px] font-bold text-amber-300 flex items-center gap-1">
-                🇧🇷 Áudio & Vídeo em Português
+                🇧🇷 Em Português
               </span>
             </div>
             <h4 className="text-sm font-black text-slate-100">
-              {currentWorkout.fullSessionTitle || `Vídeo-Aula Completa de ${currentWorkout.dayLabel}`}
+              {currentWorkout.fullSessionTitle || `Treino Completo de ${currentWorkout.dayLabel}`}
             </h4>
             <p className="text-xs text-slate-400">
-              Acompanhe o treino de {currentWorkout.durationMin} minutos do início ao fim com professor brasileiro guiando cada segundo.
+              Acompanhe o treino de {currentWorkout.durationMin} minutos diretamente no YouTube.
             </p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-            <button
-              onClick={() => setShowFullSessionModal(true)}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-xs font-black px-4 py-2.5 rounded-xl bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition shadow-md shadow-emerald-500/20"
+            <a
+              href={currentWorkout.fullSessionYoutubeUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(currentWorkout.title + ' em casa')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 text-xs font-black px-5 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white transition shadow-lg shadow-red-600/30 cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 fill-slate-950" />
-              <span>Assistir Aula Completa</span>
-            </button>
-            {currentWorkout.fullSessionYoutubeUrl && (
-              <a
-                href={currentWorkout.fullSessionYoutubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-slate-100 border border-slate-700 transition"
-                title="Abrir no YouTube Brasil"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            )}
+              <Play className="w-3.5 h-3.5 fill-white text-white" />
+              <span>Abrir Treino no YouTube</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       )}
@@ -442,8 +432,8 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
                 Nível: {currentWorkout.level}
               </span>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                🇧🇷 Treinadores Brasileiros
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-red-500/15 text-red-300 border border-red-500/30 flex items-center gap-1">
+                ▶ Treino no YouTube
               </span>
             </div>
             <h3 className="text-lg font-black text-slate-100">{currentWorkout.title}</h3>
@@ -622,19 +612,19 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  {/* Video Demo Button */}
-                  {exercise.videoUrl && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveVideoExercise(exercise);
-                      }}
-                      className="flex items-center gap-1 text-[11px] font-black px-2.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 transition shadow-sm"
-                      title="Assistir Vídeo Tutorial em Português"
+                  {/* Direct YouTube Link Button */}
+                  {(exercise.youtubeSearchUrl || exercise.videoUrl) && (
+                    <a
+                      href={exercise.youtubeSearchUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.name + ' como fazer')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-[11px] font-black px-2.5 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 transition shadow-sm cursor-pointer"
+                      title="Abrir no YouTube"
                     >
-                      <PlayCircle className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
-                      <span className="hidden sm:inline">Vídeo (pt-BR)</span>
-                    </button>
+                      <ExternalLink className="w-3.5 h-3.5 text-red-400" />
+                      <span className="hidden sm:inline">YouTube</span>
+                    </a>
                   )}
 
                   <button
@@ -655,43 +645,32 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
                     exit={{ height: 0, opacity: 0 }}
                     className="border-t border-slate-800 bg-slate-950/60 p-4 space-y-3 text-xs"
                   >
-                    {/* Inline Video Player Preview */}
-                    {exercise.videoUrl && (
-                      <div className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-900">
-                        <div className="p-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-                          <span className="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
-                            <Video className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>{exercise.videoTitlePt || `Vídeo Tutorial em Português: ${exercise.name}`}</span>
-                          </span>
-                          <div className="flex items-center gap-2">
-                            {exercise.youtubeSearchUrl && (
-                              <a
-                                href={exercise.youtubeSearchUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[10px] text-amber-300 font-bold hover:underline flex items-center gap-1"
-                              >
-                                <span>Abrir no YouTube Brasil</span>
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            )}
-                            <button
-                              onClick={() => setActiveVideoExercise(exercise)}
-                              className="text-[10px] text-emerald-400 font-bold hover:underline flex items-center gap-1"
-                            >
-                              <span>Tela Cheia</span>
-                            </button>
+                    {/* Direct YouTube Link Card (no in-app iframe) */}
+                    {(exercise.youtubeSearchUrl || exercise.videoUrl) && (
+                      <div className="rounded-2xl p-3.5 bg-gradient-to-r from-red-950/30 via-slate-900 to-slate-900 border border-red-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-md shadow-red-600/25">
+                            ▶
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-black uppercase text-red-400 block tracking-wider">
+                              Treino no YouTube • Português
+                            </span>
+                            <span className="text-xs font-bold text-slate-100 block">
+                              {exercise.videoTitlePt || `Vídeo no YouTube: ${exercise.name}`}
+                            </span>
                           </div>
                         </div>
-                        <div className="relative aspect-video w-full">
-                          <iframe
-                            src={exercise.videoUrl}
-                            title={`Vídeo: ${exercise.name}`}
-                            className="w-full h-full border-0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
+
+                        <a
+                          href={exercise.youtubeSearchUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(exercise.name + ' como fazer')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 text-xs font-black text-white bg-red-600 hover:bg-red-500 px-3.5 py-2 rounded-xl transition shadow-md shadow-red-600/30 shrink-0 w-full sm:w-auto cursor-pointer"
+                        >
+                          <span>Assistir no YouTube</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
                       </div>
                     )}
 
@@ -759,7 +738,7 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
                         <button
                           onClick={() => handleToggleVoiceCoach(exercise.voiceGuidanceText || exercise.instructions.join('. '))}
                           className="flex items-center gap-1 text-[11px] font-bold text-amber-300 hover:text-amber-200 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/30"
-                          title="Ouvir instrução com treinador de voz em português"
+                          title="Ouvir instrução com áudio guia em português"
                         >
                           <Volume2 className="w-3 h-3 text-amber-400" />
                           <span>Ouvir Voz pt-BR</span>
@@ -819,339 +798,6 @@ export const HomeWorkoutsView: React.FC<HomeWorkoutsViewProps> = ({ user, onLogW
           </span>
         </button>
       </div>
-
-      {/* Video Demonstration Modal (Português pt-BR) */}
-      <AnimatePresence>
-        {activeVideoExercise && (
-          <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-            {(() => {
-              const activeExIndex = currentWorkout.exercises.findIndex((e) => e.id === activeVideoExercise.id);
-              const prevExercise = activeExIndex > 0 ? currentWorkout.exercises[activeExIndex - 1] : null;
-              const nextExercise = activeExIndex >= 0 && activeExIndex < currentWorkout.exercises.length - 1 ? currentWorkout.exercises[activeExIndex + 1] : null;
-
-              return (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                  className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl p-5 relative shadow-2xl space-y-4 my-auto text-slate-100"
-                >
-                  {/* Top Exercise Navigation Bar */}
-                  <div className="flex items-center justify-between text-xs bg-slate-950/80 px-3 py-2 rounded-2xl border border-slate-800/90">
-                    <button
-                      disabled={!prevExercise}
-                      onClick={() => {
-                        handleStopVoice();
-                        if (prevExercise) setActiveVideoExercise(prevExercise);
-                      }}
-                      className={`flex items-center gap-1 font-bold transition px-2 py-1 rounded-xl ${
-                        prevExercise
-                          ? 'text-emerald-400 hover:bg-slate-800 hover:text-emerald-300'
-                          : 'text-slate-600 opacity-40 cursor-not-allowed'
-                      }`}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      <span className="hidden sm:inline">Anterior</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        🇧🇷 VÍDEO EM PORTUGUÊS
-                      </span>
-                      <span className="text-[11px] font-mono font-bold text-slate-300">
-                        Exercício {activeExIndex + 1} de {currentWorkout.exercises.length}
-                      </span>
-                    </div>
-
-                    <button
-                      disabled={!nextExercise}
-                      onClick={() => {
-                        handleStopVoice();
-                        if (nextExercise) setActiveVideoExercise(nextExercise);
-                      }}
-                      className={`flex items-center gap-1 font-bold transition px-2 py-1 rounded-xl ${
-                        nextExercise
-                          ? 'text-emerald-400 hover:bg-slate-800 hover:text-emerald-300'
-                          : 'text-slate-600 opacity-40 cursor-not-allowed'
-                      }`}
-                    >
-                      <span className="hidden sm:inline">Próximo</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Header Title & Details */}
-                  <div className="flex items-start justify-between gap-3 pr-8">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="text-[10px] font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                          {activeVideoExercise.setsAndReps}
-                        </span>
-                        {activeVideoExercise.instructorName && (
-                          <span className="text-[10px] font-semibold text-slate-300 bg-slate-800 px-2 py-0.5 rounded">
-                            {activeVideoExercise.instructorName}
-                          </span>
-                        )}
-                        <span className="text-[10px] font-bold text-emerald-400">
-                          {currentWorkout.dayLabel}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-black text-slate-100">
-                        {activeVideoExercise.videoTitlePt || activeVideoExercise.name}
-                      </h3>
-                      <p className="text-xs text-slate-400 font-medium">
-                        Músculos alvo: <strong className="text-emerald-400">{activeVideoExercise.targetMuscles}</strong>
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        handleStopVoice();
-                        setActiveVideoExercise(null);
-                      }}
-                      className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-100 bg-slate-800/80 rounded-xl transition"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Responsive Video Frame */}
-                  <div className="rounded-2xl overflow-hidden border border-slate-800 bg-black shadow-lg relative">
-                    <div className="relative aspect-video w-full">
-                      <iframe
-                        src={activeVideoExercise.videoUrl}
-                        title={activeVideoExercise.name}
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  </div>
-
-                  {/* Direct YouTube Brasil Launch & pt-BR Voice Guidance Banner */}
-                  <div className="bg-gradient-to-r from-red-950/40 via-slate-950 to-slate-950 p-3 rounded-2xl border border-red-500/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md shadow-red-600/30">
-                        ▶
-                      </div>
-                      <div>
-                        <span className="text-[11px] font-extrabold text-slate-200 block">
-                          Tutorial em Português: {activeVideoExercise.instructorName || 'Professor Especialista'}
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          🇧🇷 Vídeo passo a passo em alta resolução no YouTube Brasil
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      {activeVideoExercise.youtubeSearchUrl && (
-                        <a
-                          href={activeVideoExercise.youtubeSearchUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-xs font-black text-white bg-red-600 hover:bg-red-500 px-3.5 py-2 rounded-xl transition shadow-md shadow-red-600/30"
-                        >
-                          <span>Assistir no YouTube Brasil</span>
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Voice Coach Button */}
-                  <div className="flex items-center justify-between gap-2 px-1">
-                    <button
-                      onClick={() => handleToggleVoiceCoach()}
-                      className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition ${
-                        isSpeakingVoice
-                          ? 'bg-amber-500 text-slate-950 border-amber-400 animate-pulse'
-                          : 'bg-amber-500/15 text-amber-300 border-amber-500/30 hover:bg-amber-500/25'
-                      }`}
-                    >
-                      {isSpeakingVoice ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                      <span>{isSpeakingVoice ? 'Pausar Áudio Guia' : '🔊 Ouvir Voz do Treinador (pt-BR)'}</span>
-                    </button>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      Instruções faladas em português
-                    </span>
-                  </div>
-
-                  {/* Instructions and Form Cues */}
-                  <div className="space-y-2.5 max-h-52 overflow-y-auto pr-1">
-                    <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
-                      <h5 className="font-extrabold text-xs text-slate-200 mb-1.5 flex items-center gap-1.5">
-                        <Info className="w-3.5 h-3.5 text-emerald-400" />
-                        Como Realizar com Postura Perfeita:
-                      </h5>
-                      <ol className="space-y-1.5 text-xs text-slate-300 list-decimal list-inside leading-relaxed">
-                        {activeVideoExercise.instructions.map((step, idx) => (
-                          <li key={idx}>{step}</li>
-                        ))}
-                      </ol>
-                    </div>
-
-                    {activeVideoExercise.breathingTip && (
-                      <div className="bg-sky-500/10 border border-sky-500/20 rounded-2xl p-3 text-xs text-sky-300 flex items-start gap-2">
-                        <Wind className="w-4 h-4 shrink-0 text-sky-400 mt-0.5" />
-                        <div>
-                          <strong className="block font-black text-[11px] uppercase tracking-wider mb-0.5">
-                            Dica de Respiração:
-                          </strong>
-                          <p className="text-slate-300 leading-relaxed">{activeVideoExercise.breathingTip}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3 text-xs text-emerald-300">
-                      <strong className="block font-black text-[11px] uppercase tracking-wider mb-0.5">
-                        💡 Dica do Especialista Brasileiro:
-                      </strong>
-                      <p className="text-slate-300 leading-relaxed">{activeVideoExercise.tips}</p>
-                    </div>
-
-                    {activeVideoExercise.commonMistakes && activeVideoExercise.commonMistakes.length > 0 && (
-                      <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-3 text-xs text-rose-300">
-                        <strong className="block font-black text-[11px] uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
-                          Erros Comuns para Não Cometer:
-                        </strong>
-                        <ul className="space-y-1 text-slate-300 list-disc list-inside">
-                          {activeVideoExercise.commonMistakes.map((m, mIdx) => (
-                            <li key={mIdx}>{m}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Modal Footer Controls */}
-                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800">
-                    <button
-                      onClick={() => {
-                        handleStartTimerPreset(activeVideoExercise.durationSec || 45);
-                        handleStopVoice();
-                        setActiveVideoExercise(null);
-                      }}
-                      className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3.5 py-2.5 rounded-xl border border-emerald-500/30 transition"
-                    >
-                      <Play className="w-3.5 h-3.5 fill-emerald-400" />
-                      <span>Iniciar Cronômetro ({activeVideoExercise.durationSec || 45}s)</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        toggleExerciseCheck(activeVideoExercise.id);
-                        handleStopVoice();
-                        setActiveVideoExercise(null);
-                      }}
-                      className="text-xs font-black px-4 py-2.5 rounded-xl bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition shadow-md shadow-emerald-500/20"
-                    >
-                      Concluir Exercício ✓
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })()}
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Full Daily Session Video Modal */}
-      <AnimatePresence>
-        {showFullSessionModal && currentWorkout.fullSessionVideoUrl && (
-          <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-5 relative shadow-2xl space-y-4 my-auto text-slate-100"
-            >
-              <div className="flex items-start justify-between gap-3 pr-8">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                      <span>🇧🇷</span> Videoaula Completa em Português
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-300">
-                      {currentWorkout.durationMin} Minutos
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-black text-slate-100">
-                    {currentWorkout.fullSessionTitle}
-                  </h3>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Rotina completa de {currentWorkout.dayLabel} • {currentWorkout.focus}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowFullSessionModal(false)}
-                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-100 bg-slate-800/80 rounded-xl transition"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Full Video Frame */}
-              <div className="rounded-2xl overflow-hidden border border-slate-800 bg-black shadow-lg">
-                <div className="relative aspect-video w-full">
-                  <iframe
-                    src={currentWorkout.fullSessionVideoUrl}
-                    title={currentWorkout.fullSessionTitle}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-
-              {/* Direct YouTube Brasil Link Banner */}
-              <div className="bg-gradient-to-r from-red-950/40 via-slate-950 to-slate-950 p-3 rounded-2xl border border-red-500/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md shadow-red-600/30">
-                    ▶
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-extrabold text-slate-200 block">
-                      Videoaula Completa no YouTube Brasil (100% em Português)
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Acompanhe o professor do início ao fim com instruções em áudio e vídeo
-                    </span>
-                  </div>
-                </div>
-
-                {currentWorkout.fullSessionYoutubeUrl && (
-                  <a
-                    href={currentWorkout.fullSessionYoutubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 text-xs font-black text-white bg-red-600 hover:bg-red-500 px-3.5 py-2 rounded-xl transition shadow-md shadow-red-600/30 shrink-0"
-                  >
-                    <span>Assistir no YouTube Brasil</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800">
-                <span className="text-xs text-slate-400 font-semibold">
-                  Gasto calórico estimado: <strong className="text-emerald-400">~{currentWorkout.caloriesBurnEstimate} kcal</strong>
-                </span>
-
-                <button
-                  onClick={() => {
-                    handleCompleteCurrentWorkout();
-                    setShowFullSessionModal(false);
-                  }}
-                  className="text-xs font-black px-4 py-2.5 rounded-xl bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition shadow-md shadow-emerald-500/20"
-                >
-                  Marcar Treino Concluído ✓
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Celebration Modal Toast */}
       <AnimatePresence>
