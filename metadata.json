@@ -1,0 +1,6 @@
+{
+  "name": "Zero Carb Brasil",
+  "description": "Aplicativo mobile premium de nutrição low carb, cetogênica e controle de carboidratos com IA.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

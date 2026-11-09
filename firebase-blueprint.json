@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profile with registration details, WhatsApp, and 5-day trial status",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "description": "User email address" },
+        "whatsapp": { "type": "string", "description": "WhatsApp phone number with DDD" },
+        "goal": { "type": "string", "description": "Goal type" },
+        "currentWeight": { "type": "number", "description": "Current weight in kg" },
+        "targetWeight": { "type": "number", "description": "Target weight in kg" },
+        "height": { "type": "number", "description": "Height in cm" },
+        "age": { "type": "number", "description": "Age" },
+        "gender": { "type": "string", "description": "Gender" },
+        "activityLevel": { "type": "string", "description": "Activity level" },
+        "targetNetCarbs": { "type": "number", "description": "Net carbs target in grams" },
+        "targetCalories": { "type": "number", "description": "Daily calories target" },
+        "targetProtein": { "type": "number", "description": "Protein target in grams" },
+        "targetFat": { "type": "number", "description": "Fat target in grams" },
+        "isOnboarded": { "type": "boolean", "description": "Whether onboarding completed" },
+        "createdAt": { "type": "string", "description": "Registration date ISO" },
+        "trialEndsAt": { "type": "string", "description": "Trial expiration date ISO (5 days after creation)" },
+        "isSubscribed": { "type": "boolean", "description": "Whether premium plan active" },
+        "streakDays": { "type": "number", "description": "Current streak days" }
+      },
+      "required": ["uid", "name", "email"]
+    },
+    "dailyLogs": {
+      "title": "DailyLog",
+      "description": "Daily food entries, water intake, and notes per user",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "date": { "type": "string", "description": "Date in YYYY-MM-DD" },
+        "waterIntakeMl": { "type": "number", "description": "Water intake in ml" },
+        "meals": { "type": "array", "description": "Logged meals list" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["userId", "date"]
+    },
+    "weeklyMeasurements": {
+      "title": "WeeklyMeasurement",
+      "description": "Weekly weight and body measurements tracking",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "weekLabel": { "type": "string", "description": "Label such as Semana 1" },
+        "date": { "type": "string", "description": "Date YYYY-MM-DD" },
+        "weightKg": { "type": "number", "description": "Weight in kg" },
+        "chestCm": { "type": "number", "description": "Chest measurement cm" },
+        "waistCm": { "type": "number", "description": "Waist measurement cm" },
+        "abdomenCm": { "type": "number", "description": "Abdomen measurement cm" },
+        "hipsCm": { "type": "number", "description": "Hips measurement cm" },
+        "thighCm": { "type": "number", "description": "Thigh measurement cm" },
+        "armCm": { "type": "number", "description": "Arm measurement cm" },
+        "notes": { "type": "string", "description": "Weekly progress notes" },
+        "createdAt": { "type": "string", "description": "Entry creation ISO" }
+      },
+      "required": ["userId", "date", "weightKg"]
+    }
+  }
+}
